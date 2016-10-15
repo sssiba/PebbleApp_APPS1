@@ -1,0 +1,34 @@
+{
+    "author": "sss6001mk2sr@gmail.com",
+    "dependencies": {},
+    "keywords": [],
+    "name": "apps1",
+    "pebble": {
+        "displayName": "APPS1",
+        "enableMultiJS": false,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "fonts/origa___.ttf",
+                    "name": "FONT_TELOP_20",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/Braciola MS.ttf",
+                    "name": "FONT_NORMAL_12",
+                    "targetPlatforms": null,
+                    "type": "font"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "uuid": "2466284b-20ba-4453-af49-69a72f355366",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "1.0.0"
+}
