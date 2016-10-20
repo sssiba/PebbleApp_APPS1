@@ -9,8 +9,13 @@
 #define TOFIX( v ) ((v) * 64)
 #define TOINT( v ) ((v) / 64)
 
-#define TOFIXSIN( v, s ) ((int16_t)( (int32_t)(sin_lookup( DEG_TO_TRIGANGLE(v) * s) ) >> 10)) //TRIG_MAX_RATIO 0xffff なので、16bit から　tofix の 64(6bit) 分除外
-#define TOFIXCOS( v, s ) ((int16_t)( (int32_t)(cos_lookup( DEG_TO_TRIGANGLE(v) * s) ) >> 10))
+/*
+  int32_t ang = TRIG_MAX_ANGLE * degree / 360; <<<<< これは DEG_TO_TRIGANGLE() で置き換え可能
+  (int16_t)( (sin_lookup( ang ) * スケール ) / TRIG_MAX_RATIO ) <<<<<<< TRIG_MAX_RATIO == 0xffff 
+
+*/
+#define TOFIXSIN( v, s ) ((int16_t)( (int32_t)(sin_lookup( DEG_TO_TRIGANGLE(v) ) * s ) >> 10)) //TRIG_MAX_RATIO 0xffff なので、16bit から　tofix の 64(6bit) 分除外
+#define TOFIXCOS( v, s ) ((int16_t)( (int32_t)(cos_lookup( DEG_TO_TRIGANGLE(v) ) * s ) >> 10))
 
 
 #define GROUND_Y 120

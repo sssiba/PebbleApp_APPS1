@@ -1,6 +1,8 @@
 #include <pebble.h>
 
 #include "main.h"
+#include "entry.h"
+#include "flowGame.h"
 
 #include "objEnemy1.h"
 
@@ -46,7 +48,8 @@ void objEne1Setup( OBJDATA *od ) {
   od->funcHit = objEne1Hit;
 
   od->state = 0;
-  od->wait = 8 + rand() % 20;
+  od->wait = 14 + rand() % 20;
+  od->cnt = 60 + rand() % 240; //滞在時間
 
   //objDel() 内で抹消
   od->drawanim = createDrawAnimWithDDSET( &s_ddset );
@@ -59,14 +62,16 @@ void objEne1Setup( OBJDATA *od ) {
   od->cdata.info.square.rect.origin.y = TOFIX(-4);
   od->cdata.info.square.rect.size.w = TOFIX(16);
   od->cdata.info.square.rect.size.h = TOFIX( 8);
+  
+  entryIncCount();
 }
 
 void objEne1Finish( OBJDATA *od ) {
-  
+  entryDecCount();
 }
 
-#define MVSPD TOFIX( 4.0f )
-#define MVYRANGE 3
+#define MVSPD TOFIX( 3.0f )
+#define MVYRANGE 8
 void objEne1Update( OBJDATA *od ) {
   switch( od->state ) {
     case 0:
@@ -77,7 +82,7 @@ void objEne1Update( OBJDATA *od ) {
         } else {
           od->prm[0] = -MVSPD;
         }
-        od->prm[1] = rand() % 360;
+        od->prm[1] = 0;
         od->prm[2] = od->pos.y;
         od->state = 1;
       }
@@ -85,45 +90,39 @@ void objEne1Update( OBJDATA *od ) {
     case 1:
       {
         od->pos.x += od->prm[0];
+        od->pos.y = od->prm[2] + TOFIXSIN( od->prm[1], MVYRANGE );
         
-        /*
-  int32_t mang = TRIG_MAX_ANGLE * t->tm_min / 60;
-  GPoint mhand = {
-    .x = (int16_t)(sin_lookup(mang) * (int32_t)mhlen / TRIG_MAX_RATIO) + center.x,
-    .y = (int16_t)(-cos_lookup(mang) * (int32_t)mhlen / TRIG_MAX_RATIO) + center.y,
-  };
-  */
-        int32_t ang = TRIG_MAX_ANGLE * od->prm[1] / 360;
-        int16_t my = (int16_t)(sin_lookup(ang) * MVYRANGE / TRIG_MAX_RATIO );
+        od->prm[1] += 6;
         
-//        APPLOG( "ang:%lx(%ld)[%d]  slup:%lx(%ld)", ang, ang, DEG_TO_TRIGANGLE(od->prm[1]), sin_lookup(ang), sin_lookup(ang) );
+        if( od->prm[1] >= 360 ) od->prm[1] -= 360;
         
-        ang = od->prm[1];
-        APPLOG( "ang:%d  sin:%d[%d]", od->prm[1], TOFIXSIN(ang, MVYRANGE ), TOINT( TOFIXSIN( ang, MVYRANGE ) ) );
-
-        od->pos.y = od->prm[2] + TOFIX(my);
-        
-        if( ++od->prm[1] >= 360 ) od->prm[1] = 0;
-        
-        if( od->pos.x < TOFIX( 8 ) ) {
-          od->pos.x = TOFIX(8);
-          od->prm[0] = MVSPD;
-        } else
-        if( od->pos.x > TOFIX(136) ) {
-          od->pos.x = TOFIX(136);
-          od->prm[0] = -MVSPD;
+        if( od->cnt > 0 ) {
+          od->cnt--;
+          if( od->pos.x < TOFIX( 8 ) ) {
+            od->pos.x = TOFIX(8);
+            od->prm[0] = MVSPD;
+          } else
+          if( od->pos.x > TOFIX(136) ) {
+            od->pos.x = TOFIX(136);
+            od->prm[0] = -MVSPD;
+          }
+        } else {
+          if( od->pos.x < TOFIX( -8 ) ||
+              od->pos.x > TOFIX( 144 + 8 ) ) {
+            //滞在時間過ぎたから画面外で消滅
+            objDel( od );
+            return;
+          }
         }
-            
       }
       break;
   }
-  
-  
-  
 }
 
 void objEne1Hit( OBJDATA *od, OBJDATA *tgt ) {
+  objDel( od );
   
+  addScore( 50 );
 }
 
 //----------------------------------------------------------------

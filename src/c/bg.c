@@ -22,14 +22,14 @@ static void starDraw( Layer *tgt, GContext *ctx );
 static void starUpdate();
 
 //-----------------------------------------------------------------------
-
-static void mountainInit();
-static void mountainEnd();
-static void mountainDraw( Layer *tgt, GContext *ctx );
-static void mountainUpdate();
+//遠景
+static void farInit();
+static void farEnd();
+static void farDraw( Layer *tgt, GContext *ctx );
+static void farUpdate();
 
 //-----------------------------------------------------------------------
-
+//近景
 static void nearInit();
 static void nearEnd();
 static void nearDraw( Layer *tgt, GContext *ctx );
@@ -42,25 +42,25 @@ static void nearUpdate();
 
 void bgInit() {
   starInit();
-  mountainInit();
+  farInit();
   nearInit();
 }
 
 void bgEnd() {
   starEnd();
-  mountainEnd();
+  farEnd();
   nearEnd();
 }
 
 void bgDraw( Layer *tgt, GContext *ctx ) {
   starDraw( tgt, ctx );
-  mountainDraw( tgt, ctx );
+  farDraw( tgt, ctx );
   nearDraw( tgt, ctx );
 }
 
 void bgUpdate() {
   starUpdate();
-  mountainUpdate();
+  farUpdate();
   nearUpdate();
 }
 
@@ -146,7 +146,7 @@ static GPath *g_mtpath;
 static GPathInfo g_mtpathinfo;
 static int g_mtmovewait;
 
-void mountainInit() {
+void farInit() {
   GRect* srect = scrGetRect();
 
   //星の出現領域
@@ -168,7 +168,7 @@ void mountainInit() {
   g_mtmovewait = 0;
 }
 
-void mountainEnd() {
+void farEnd() {
   if( g_mtpath ) {
     gpath_destroy( g_mtpath );
     g_mtpath = NULL;
@@ -179,7 +179,7 @@ void mountainEnd() {
   }
 }
 
-void mountainUpdate() {
+void farUpdate() {
   
   if( ++g_mtmovewait < TIME_MTMOVE ) return;
   
@@ -204,7 +204,7 @@ void mountainUpdate() {
   g_mtmovewait = 0;
 }
 
-void mountainDraw( Layer *tgt, GContext *ctx ) {
+void farDraw( Layer *tgt, GContext *ctx ) {
   int idx = g_mtread;
   for( int i=0; i<MAX_MTVTX; i++ ) {
     g_mtpathinfo.points[i] = g_mtvtx[idx];

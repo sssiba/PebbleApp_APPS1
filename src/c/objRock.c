@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "main.h"
+#include "entry.h"
 #include "objRock.h"
 #include "flowGame.h"
 
@@ -52,9 +53,12 @@ void objRockSSetup( OBJDATA *od ) {
   od->cdata.info.square.rect.origin.y = TOFIX(-6);
   od->cdata.info.square.rect.size.w = TOFIX(14);
   od->cdata.info.square.rect.size.h = TOFIX(6);
+  
+  entryIncGroundCount();
 }
 
 void objRockSFinish( OBJDATA *od ) {
+  entryDecGroundCount();
 }
 
 void objRockSUpdate( OBJDATA *od ) {
