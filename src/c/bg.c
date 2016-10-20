@@ -136,7 +136,7 @@ void starDraw( Layer *tgt, GContext *ctx ) {
 #define MAX_MTVTX 16
 #define MIN_MTLEN 10
 #define MAX_MTLEN 25
-#define TIME_MTMOVE 6
+#define TIME_MTMOVE 12
 
 
 static GPoint g_mtvtx[ MAX_MTVTX ];
@@ -225,7 +225,7 @@ void mountainDraw( Layer *tgt, GContext *ctx ) {
 #define MAX_NEARVTX 10
 #define MIN_NEARLEN 25
 #define MAX_NEARLEN 25
-#define TIME_NEARMOVE 1
+#define TIME_NEARMOVE 3
 
 
 static GPoint g_nearvtx[ MAX_NEARVTX ];

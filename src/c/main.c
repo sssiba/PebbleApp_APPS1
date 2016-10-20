@@ -2,9 +2,9 @@
 #include "main.h"
 #include "screen.h"
 #include "bg.h"
-#include "player.h"
 #include "key.h"
 #include "flow.h"
+#include "drawAnim.h"
 
 static Window *my_window;
 
@@ -20,6 +20,7 @@ static void appTimerCB( void *data)
   //状態更新
   keyUpdate();
   flowUpdate();
+  
   
   //画面再描画設定(いる？)
   scrDirty();
@@ -43,6 +44,20 @@ GFont getFontTelop() {
   return g_fonttelop;
 }
 
+GPoint toFixPos( GPoint p ) {
+  p.x = TOFIX( p.x );
+  p.y = TOFIX( p.y );
+  
+  return p;
+}
+
+GPoint toIntPos( GPoint p ) {
+  p.x = TOINT( p.x );
+  p.y = TOINT( p.y );
+  
+  return p;
+}
+
 //---------------------------------------------
 
 void handle_init(void) {
@@ -56,6 +71,7 @@ void handle_init(void) {
   
   keyInit( my_window );
   scrInit( my_window );
+  drawAnimInit();
   
   flowInit();
   flowChange( FLOW_TITLE );
@@ -72,6 +88,8 @@ void handle_deinit(void) {
   window_destroy(my_window);
 
   flowEnd();
+  
+  drawAnimEnd();
   scrEnd();
   keyEnd();
   

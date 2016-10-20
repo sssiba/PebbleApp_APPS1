@@ -1,36 +1,42 @@
 #include <pebble.h>
 #include "main.h"
 #include "bg.h"
-#include "player.h"
 #include "flowGame.h"
 #include "flow.h"
 #include "key.h"
 #include "object.h"
+#include "entry.h"
+#include "drawAnim.h"
+#include "objPlayer.h"
 
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
-static uint8_t left;
-static uint32_t score;
+static uint8_t s_left;
+static uint32_t s_score;
+
+static OBJDATA *s_objplayer;
 
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 
 void flowGameSetup() {
-  left = 2;
-  score = 0;
-  
+  s_left = 2;
+  s_score = 0;
+
   objInit();
-  plInit();
-  pbInit();
   bgInit();
+  entryInit();
+  
+  s_objplayer = objAdd( OBJ_TYPE_PLAYER, objPlayerSetup );
 }
 
 void flowGameFinish() {
+  objDel( s_objplayer );
+  
+  entryEnd();
   bgEnd();
-  pbEnd();
-  plEnd();
   objEnd();
 }
 
@@ -40,11 +46,11 @@ void flowGameUpdate() {
     return;
   }
   
-  objUpdate();
-  
   bgUpdate();
-  plUpdate();
-  pbUpdate();
+  objUpdate();
+  objCollisionAll();
+  
+  entryUpdate();
 }
 
 void flowGameDraw( Layer *tgt, GContext *ctx ) {
@@ -53,9 +59,6 @@ void flowGameDraw( Layer *tgt, GContext *ctx ) {
   bgDraw( tgt, ctx );
   
   objDraw( tgt, ctx );
-  
-  plDraw( tgt, ctx );
-  pbDraw( tgt, ctx );
   
   graphics_context_set_stroke_color( ctx, GColorWhite );
   
@@ -68,7 +71,29 @@ void flowGameDraw( Layer *tgt, GContext *ctx ) {
   box.origin.y = 142;
   box.size.w = 144;
   box.size.h = 24;
-  snprintf( msg, sizeof(msg), "LEFT:%d\nSCORE:%lu", left, score );
+  snprintf( msg, sizeof(msg), "LEFT:%d\nSCORE:%lu", s_left, s_score );
   graphics_draw_text( ctx, msg, getFont(), box, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL );
-  
 }
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+void addScore( uint32_t v ) {
+  s_score += v;
+}
+
+void addLeft( int8_t v ) {
+  s_left += v;
+}
+
+uint32_t getScore() {
+  return s_score;
+}
+
+uint8_t getLeft() {
+  return s_left;
+}
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------

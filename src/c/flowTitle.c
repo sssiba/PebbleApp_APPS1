@@ -4,7 +4,6 @@
 
 #include "main.h"
 #include "bg.h"
-#include "player.h"
 #include "flowGame.h"
 #include "key.h"
 #include "screen.h"
@@ -18,10 +17,10 @@
 #define PROMPTX_MIN TOFIX( -120 )
 #define PROMPTX_MAX TOFIX( 20 )
 #define PROMPTY TOFIX( 106 )
-#define PROMPTSPD TOFIX( -1.25f )
+#define PROMPTSPD GROUND_SPD; //TOFIX( -1.25f )
 
-static bool g_showprompt;
-static uint16_t g_ivprompt;
+//static bool g_showprompt;
+//static uint16_t g_ivprompt;
 static GPoint g_promptpos;
 
 void flowTitleSetup() {
@@ -61,7 +60,7 @@ void flowTitleDraw( Layer *tgt, GContext *ctx ) {
   box.origin.y = 20;
   box.size.w = 144;
   box.size.h = 32;
-  snprintf( msg, sizeof(msg), "Moon\nGurads" );
+  snprintf( msg, sizeof(msg), "Moon\nBattle" );
   graphics_draw_text( ctx, msg, getFontTelop(), box, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL );
 
   //--- time

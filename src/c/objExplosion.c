@@ -7,6 +7,10 @@
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 void objExpSetup( OBJDATA *od ) {
+  od->funcFinish = objExpFinish;
+  od->funcUpdate = objExpUpdate;
+  od->funcDraw = objExpDraw;
+  
   od->state = 1;
   od->wait = 1;
 }
@@ -32,7 +36,7 @@ void objExpDraw( Layer *tgt, GContext *ctx, OBJDATA *od ) {
 
 //----------------------------------------------------------------
 void createExpSmall( GPoint pos ) {
-  OBJDATA *od = objAdd( OBJ_TYPE_EFFECT, objExpSetup, objExpFinish, objExpUpdate, objExpDraw );
+  OBJDATA *od = objAdd( OBJ_TYPE_EFFECT, objExpSetup );
   
   od->pos = pos;
 }

@@ -1,38 +1,80 @@
 #include <pebble.h>
 #include "main.h"
 #include "objRock.h"
+#include "flowGame.h"
 
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
+static GPath s_pathS = {
+  6,
+  (GPoint []){
+    { 0,   0},
+    { 2,  -4},
+    { 4,  -7},
+    { 9,  -5},
+    {12,  -4},
+    {14,   0},
+  },
+  0,
+  { 0, 0 },
+};
+static DDATA s_ddS = {
+  DTYPE_STROKE_OPEN,
+  { TOFIX(0), TOFIX(0) }, TOFIX(0),
+  {.argb = GColorWhiteARGB8 }, {.argb = GColorWhiteARGB8 }, 
+  {.stroke.path = &s_pathS },
+};
+
+static DDSET s_ddsetS = {
+  1,
+  (DDATA* []){ &s_ddS }
+};
+
 
 void objRockSSetup( OBJDATA *od ) {
+  od->funcFinish = objRockSFinish;
+  od->funcUpdate = objRockSUpdate;
+//  od->funcDraw = objRockSDraw;
+  od->funcHit = objRockSHit;
+
   od->state = 1;
   od->wait = 1;
+
+  //objDel() 内で抹消
+  od->drawanim = createDrawAnimWithDDSET( &s_ddsetS );
+  
+  
+  //当たり判定設定
+  od->cdata.type = COLTYPE_SQUARE;
+  od->cdata.obj = od;
+  od->cdata.info.square.rect.origin.x = TOFIX(0);
+  od->cdata.info.square.rect.origin.y = TOFIX(-6);
+  od->cdata.info.square.rect.size.w = TOFIX(14);
+  od->cdata.info.square.rect.size.h = TOFIX(6);
 }
 
 void objRockSFinish( OBJDATA *od ) {
-  
 }
 
 void objRockSUpdate( OBJDATA *od ) {
-  if( --od->wait == 0 ) {
-    if( ++od->state > 3 ) {
-      objDel( od );
-      return;
-    }
-    od->wait = 1;
+  od->pos.x += GROUND_SPD;
+  
+  if( od->pos.x < TOFIX( -15 ) ) {
+    objDel( od );
+    return;
   }
 }
 
-void objRockSDraw( Layer *tgt, GContext *ctx, OBJDATA *od ) {
-  graphics_context_set_stroke_color( ctx, GColorWhite );
-  graphics_draw_circle( ctx, GPoint( TOINT( od->pos.x ), TOINT( od->pos.y ) ), od->state );
+void objRockSHit( OBJDATA *od, OBJDATA *tgt ) {
+  objDel( od );
+  
+  addScore( 10 );
 }
 
 //----------------------------------------------------------------
 void createRockS( GPoint pos ) {
-  OBJDATA *od = objAdd( OBJ_TYPE_ENEMY, objRockSSetup, objRockSFinish, objRockSUpdate, objRockSDraw );
+  OBJDATA *od = objAdd( OBJ_TYPE_ENEMY, objRockSSetup );
   
   od->pos = pos;
 }

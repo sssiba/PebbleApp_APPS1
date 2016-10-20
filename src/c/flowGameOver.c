@@ -3,7 +3,6 @@
 
 #include "main.h"
 #include "bg.h"
-#include "player.h"
 #include "flowGame.h"
 #include "key.h"
 #include "screen.h"

@@ -9,10 +9,17 @@
 #define TOFIX( v ) ((v) * 64)
 #define TOINT( v ) ((v) / 64)
 
+#define TOFIXSIN( v, s ) ((int16_t)( (int32_t)(sin_lookup( DEG_TO_TRIGANGLE(v) * s) ) >> 10)) //TRIG_MAX_RATIO 0xffff なので、16bit から　tofix の 64(6bit) 分除外
+#define TOFIXCOS( v, s ) ((int16_t)( (int32_t)(cos_lookup( DEG_TO_TRIGANGLE(v) * s) ) >> 10))
+
+
 #define GROUND_Y 120
 
-#define GROUND_SPD TOFIX( 3.0f )
+#define GROUND_SPD TOFIX( -1.0f )
 
 uint32_t getFrame();
 GFont getFont();
 GFont getFontTelop();
+
+GPoint toFixPos( GPoint v );
+GPoint toIntPos( GPoint v );
